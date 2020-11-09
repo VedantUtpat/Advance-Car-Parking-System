@@ -1,0 +1,116 @@
+
+
+// include the library code:
+#include <LiquidCrystal.h>
+#include <Servo.h> 
+
+const int rs = 13, en = 12, d4 = 11, d5 = 10, d6 = 9, d7 = 8;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+
+int PARKINGSENSOR1 = 3; //Sensor at IN
+int s1=0;
+
+int PARKINGSENSOR2 = 4;//OUT
+int s2=0;
+
+int servoPin = 7; 
+
+int Total =5;
+int Space;
+
+int M =0;
+int N =0;
+
+int buz = 6;
+
+Servo Servo1; 
+
+void setup()
+{
+   pinMode (PARKINGSENSOR1,INPUT);
+   pinMode (PARKINGSENSOR2,INPUT);
+  
+   pinMode (buz,OUTPUT);
+
+   Servo1.attach(servoPin);
+   
+  lcd.begin(16, 2);
+  lcd.print("PARKING SYSTEM");
+  lcd.print("  Car  Parking  ");
+  lcd.setCursor (0,1);
+  lcd.print("     System     ");
+  delay (2000);
+  lcd.clear();  
+  
+  Space = Total;
+  
+}
+
+void loop()
+{
+ 
+  s1=digitalRead (PARKINGSENSOR1);   //IN
+  s2=digitalRead (PARKINGSENSOR2);  //OUT
+
+
+if (s1==LOW && flag1==0)
+{
+  if (Space>0)
+    {
+      M =1;
+
+        if (N ==0)
+          {
+             digitalWrite (buz , HIGH);
+             delay(1000);
+             digitalWrite (buz , LOW);
+             
+             Servo1.write(0); 
+             delay(2000); 
+             // Make servo go to 90 degrees 
+             Servo1.write(90); 
+             delay(2000); 
+
+              Space=Space-1;
+              M =0;
+          }
+    }
+
+    else 
+      {
+          lcd.setCursor (0,0);
+          lcd.print(" Sorry not Space ");  
+          lcd.setCursor (0,1);
+          lcd.print("    Available    ");
+          delay (1000);
+          lcd.clear();
+      }
+}
+
+  if(s2 == LOW && N ==0)
+{
+    N =1;
+      
+      if(M ==0)
+        {
+             Servo1.write(0); 
+             delay(2000); 
+             // Make servo go to 90 degrees 
+             Servo1.write(90); 
+             delay(2000);  
+             Space = Space+1;
+             N=0;
+          }
+}
+
+lcd.setCursor (0,0);
+lcd.print("Total Space: ");
+lcd.print(Total);
+
+lcd.setCursor (0,1);
+lcd.print("Have Space: ");
+lcd.print(Space);
+
+
+}   
